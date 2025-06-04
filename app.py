@@ -17,7 +17,7 @@ with st.expander("➕ Add New Job"):
         next_task = st.text_input("Next Task")
         due_date = st.date_input("Due Date", value=date.today())
         assigned_to = st.text_input("Assigned To")
-        notes = st.text_area("Notes", height=50)
+        notes = st.text_area("Notes", height=100)
         submit = st.form_submit_button("Add Job")
 
         if submit:
