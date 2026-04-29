@@ -90,6 +90,17 @@ def save_jobs(jobs: list[dict]) -> tuple[bool, str | None]:
                 pass
 
 
+
+
+def refresh_jobs_from_disk_for_mutation() -> bool:
+    loaded_jobs, load_error = load_jobs()
+    if load_error:
+        st.error(load_error)
+        st.warning("Could not refresh latest data from CSV before saving. Please resolve the CSV issue and try again.")
+        return False
+    st.session_state.jobs = ensure_internal_ids(loaded_jobs)
+    return True
+
 def parse_due_date(due_date_str: str):
     if not due_date_str or not str(due_date_str).strip():
         return None
@@ -149,6 +160,9 @@ with st.expander("➕ Add New Job"):
         submit = st.form_submit_button("Add Job")
 
         if submit:
+            if not refresh_jobs_from_disk_for_mutation():
+                st.stop()
+
             clean_job_number = job_number.strip()
             clean_client = client.strip()
 
@@ -292,6 +306,9 @@ else:
         delete_job = st.form_submit_button("Delete Job")
 
         if save_edit:
+            if not refresh_jobs_from_disk_for_mutation():
+                st.stop()
+
             clean_job_number = edit_job_number.strip()
             clean_client = edit_client.strip()
 
@@ -340,6 +357,9 @@ else:
                             st.error(save_error)
 
         if delete_job:
+            if not refresh_jobs_from_disk_for_mutation():
+                st.stop()
+
             if not confirm_delete:
                 st.warning("Please confirm delete before removing this job.")
             else:
