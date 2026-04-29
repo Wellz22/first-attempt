@@ -128,7 +128,7 @@ def due_in_next_7_days(due_date_str: str) -> bool:
 
 
 st.set_page_config(page_title="ASC Project Dashboard", layout="wide")
-st.title("🏗️ ASC Project Management Dashboard")
+st.title("ASC Project Management Dashboard")
 
 if "jobs" not in st.session_state:
     loaded_jobs, load_error = load_jobs()
@@ -147,7 +147,7 @@ else:
 st.session_state.jobs = ensure_internal_ids(st.session_state.jobs)
 st.caption(f"Data file: {os.path.abspath(DATA_FILE)}")
 
-with st.expander("➕ Add New Job"):
+with st.expander("Add New Job"):
     with st.form("job_form"):
         job_number = st.text_input("Job Number")
         client = st.text_input("Client Name")
@@ -190,7 +190,7 @@ with st.expander("➕ Add New Job"):
                     )
                     ok, save_error = save_jobs(st.session_state.jobs)
                     if ok:
-                        st.success("✅ Job added and saved!")
+                        st.success("Job added and saved!")
                     else:
                         st.error(save_error)
 
@@ -213,7 +213,7 @@ kpi1.metric("Total Jobs", int(total_jobs))
 kpi2.metric("Overdue Jobs", int(overdue_jobs))
 kpi3.metric("Due in Next 7 Days", int(due_soon_jobs))
 
-st.markdown("### 🔎 Filters")
+st.markdown("### Filters")
 
 stage_options = ["All"] + sorted([x for x in jobs_df["Stage"].fillna("").unique().tolist() if x != ""])
 assigned_options = ["All"] + sorted(
@@ -239,7 +239,7 @@ if selected_assigned != "All":
 if overdue_filter != "All":
     filtered_df = filtered_df[filtered_df["Due Date"].apply(due_status) == overdue_filter]
 
-st.markdown("### 📋 Job List")
+st.markdown("### Job List")
 visible_df = filtered_df.drop(columns=[INTERNAL_ID_COL], errors="ignore")
 if visible_df.empty:
     st.info("No jobs match the selected filters.")
@@ -248,19 +248,19 @@ else:
 
 csv_data = visible_df.to_csv(index=False).encode("utf-8")
 st.download_button(
-    label="⬇️ Download Jobs CSV",
+    label="Download Jobs CSV",
     data=csv_data,
     file_name="jobs_export.csv",
     mime="text/csv",
 )
 
-st.markdown("### ✏️ Manage Existing Job")
+st.markdown("### Manage Existing Job")
 if jobs_df.empty:
     st.info("No jobs available to edit or delete.")
 else:
     manage_df = jobs_df.copy()
     manage_df["_label"] = manage_df.apply(
-        lambda r: f"{r['Job #']} — {r['Client']} (ID: {str(r[INTERNAL_ID_COL])[:8]})",
+        lambda r: f"{r['Job #']} - {r['Client']} (ID: {str(r[INTERNAL_ID_COL])[:8]})",
         axis=1,
     )
     selected_label = st.selectbox("Select a job to edit or delete", manage_df["_label"].tolist())
@@ -352,7 +352,7 @@ else:
                         st.session_state.jobs[target_idx] = updated_job
                         ok, save_error = save_jobs(st.session_state.jobs)
                         if ok:
-                            st.success("✅ Job updated and saved!")
+                            st.success("Job updated and saved!")
                         else:
                             st.error(save_error)
 
@@ -372,6 +372,6 @@ else:
                 else:
                     ok, save_error = save_jobs(st.session_state.jobs)
                     if ok:
-                        st.success("✅ Job deleted and saved!")
+                        st.success("Job deleted and saved!")
                     else:
                         st.error(save_error)
